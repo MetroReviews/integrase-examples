@@ -48,6 +48,10 @@ func (adp DummyAdapter) DataRequest(id string) (map[string]interface{}, error) {
 
 func main() {
 	adp := DummyAdapter{}
+	
+	integrase.Prepare(adp, integrase.MuxWrap{Router: r})
+	
+	// Add any middleware here (ex: logging middleware)
 
-	lib.StartServer(adp)
+	http.ListenAndServe("0.0.0.0", log)
 }
