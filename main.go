@@ -1,10 +1,12 @@
 package main
 
 import (
-	"github.com/MetroReviews/metro-integrase/lib"
+	integrase "github.com/MetroReviews/metro-integrase/lib"
 	"github.com/MetroReviews/metro-integrase/types"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"os"
+	"net/http"
 )
 
 // Dummy adapter backend
@@ -17,7 +19,6 @@ func (adp DummyAdapter) GetConfig() types.ListConfig {
 		ListID:      "008900c1-96c0-4fba-82f9-e4f0ba904d73",
 		RequestLogs: true,
 		StartupLogs: true,
-		BindAddr:    ":8080",
 		DomainName:  "https://spider.infinitybotlist.com",
 	}
 }
@@ -49,7 +50,7 @@ func (adp DummyAdapter) DataRequest(id string) (map[string]interface{}, error) {
 }
 
 func main() {
-	r = mux.NewRouter()
+	r := mux.NewRouter()
 	
 	adp := DummyAdapter{}
 	
@@ -59,5 +60,5 @@ func main() {
 	// Add logging middleware
 	log := handlers.LoggingHandler(os.Stdout, r)
 
-	http.ListenAndServe("0.0.0.0", log)
+	http.ListenAndServe(":8080", log)
 }
