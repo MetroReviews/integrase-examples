@@ -1,12 +1,13 @@
 package main
 
 import (
+	"net/http"
+	"os"
+
 	integrase "github.com/MetroReviews/metro-integrase/lib"
 	"github.com/MetroReviews/metro-integrase/types"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"os"
-	"net/http"
 )
 
 // Dummy adapter backend
@@ -49,13 +50,22 @@ func (adp DummyAdapter) DataRequest(id string) (map[string]interface{}, error) {
 	}, nil
 }
 
+// Wrapper around mux to implement Router interface
+type MuxWrap struct {
+	Router *mux.Router
+}
+
+func (m MuxWrap) HandleFunc(path string, f func(http.ResponseWriter, *http.Request)) {
+	m.Router.HandleFunc(path, f)
+}
+
 func main() {
 	r := mux.NewRouter()
-	
+
 	adp := DummyAdapter{}
-	
-	integrase.Prepare(adp, integrase.MuxWrap{Router: r})
-	
+
+	integrase.Prepare(adp, MuxWrap{Router: r})
+
 	// Add any middleware here (ex: logging middleware)
 	// Add logging middleware
 	log := handlers.LoggingHandler(os.Stdout, r)
